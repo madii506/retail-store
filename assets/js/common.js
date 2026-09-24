@@ -44,18 +44,16 @@
       <nav class="nav" aria-label="Main"><div class="wrap"><div class="bar">
         <a class="brand" href="/" aria-label="RETAIL home"><img src="/assets/img/mark-plain.svg" alt="" width="46" height="40"><b>RETAIL</b></a>
         <div class="links">${links.map(([u, l]) => `<a href="${u}"${u === here ? ' aria-current="page"' : ''}>${l}</a>`).join('')}</div>
-        <a class="btn cta" href="/claim">Get my $20</a>
         <button class="menu" aria-label="Menu" aria-expanded="false"><span></span></button>
       </div></div></nav>
       <div class="sheet" role="dialog" aria-label="Menu"><div class="in"><button class="x" aria-label="Close">×</button>
-        ${[['/', 'Store'], ['/claim', 'Get my $20'], ['/status', 'My ticket'], ...links].map(([u, l]) => `<a href="${u}">${l}</a>`).join('')}
+        ${[['/', 'Store'], ['/status', 'My ticket'], ...links].map(([u, l]) => `<a href="${u}">${l}</a>`).join('')}
       </div></div>`;
     const sh = $('.sheet'), mb = $('.menu');
     const set = o => { sh.classList.toggle('open', o); mb.setAttribute('aria-expanded', o); document.body.style.overflow = o ? 'hidden' : ''; };
     mb.onclick = () => set(true); $('.sheet .x').onclick = () => set(false);
     sh.onclick = e => { if (e.target === sh || e.target.tagName === 'A') set(false); };
     document.addEventListener('keydown', e => { if (e.key === 'Escape') set(false); });
-    if (here === '/claim') $('.nav .cta').classList.add('hide');
   }
 
   function reveal() {
