@@ -4,7 +4,7 @@ module.exports = {
   name: 'RETAIL',
   ticker: '$RETAIL',
   ca: '',          // token mint address (pump.fun) once it exists
-  payout: '',      // public payout wallet (the creator wallet that receives fees). Only this wallet can open /till.
+  payout: 'DvqzqPt4Cnzumfif84N3anQxV5iUVc3szfPqpkYAhXdz', // public payout wallet (the creator wallet that receives fees). Only this wallet can open /till.
   x: 'retaildot_', // X handle of the project, without @
 
   amountUsd: 20,   // paid in SOL at the price when it's sent
