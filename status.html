@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>My ticket · RETAIL</title>
+<meta name="theme-color" content="#ff8a1e">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="/assets/img/favicon-180.png">
+<link rel="stylesheet" href="/assets/css/retail.css">
+</head>
+<body>
+<header id="top"></header>
+<main class="page">
+  <div class="wrap">
+    <div style="text-align:center"><span class="kick" id="kick">Your ticket</span><h1 class="pop" id="title">Now serving…</h1></div>
+    <div class="ticket" id="ticket"></div>
+    <div class="row" id="after" style="justify-content:center;margin-top:26px"></div>
+    <form class="lookup" id="look" autocomplete="off">
+      <label class="sr" for="tid">Ticket number</label>
+      <div class="field"><span class="pre">#</span><input id="tid" class="mono" maxlength="12" placeholder="Ticket number" autocapitalize="characters" spellcheck="false"><button type="submit">Check</button></div>
+      <p class="hint" style="text-align:center">Lost it? Your ticket number is saved on the device you claimed from.</p>
+    </form>
+  </div>
+</main>
+<script src="/assets/js/common.js"></script>
+<script>
+(() => {
+  const { $, api, fmt, esc, solscan } = R;
+  const q = new URLSearchParams(location.search);
+  let id = (q.get('id') || '').toUpperCase().replace(/[^0-9A-Z]/g, '');
+  let timer = null;
+  if (!id) { try { const t = JSON.parse(localStorage.getItem('retail.tickets')) || []; if (t[0]) id = t[0].id; } catch {} }
+
+  $('#look').addEventListener('submit', e => { e.preventDefault(); const v = $('#tid').value.toUpperCase().replace(/[^0-9A-Z]/g, ''); if (v) location.href = '/status?id=' + v; });
+
+  function render(j) {
+    const t = j.t, paid = t.st === 'p', no = t.st === 'x';
+    $('#kick').textContent = 'Ticket #' + t.id;
+    $('#title').textContent = paid ? 'Paid. Receipt printed.' : no ? 'Not approved.' : q.get('new') ? 'You\'re in line!' : 'You\'re in line.';
+    document.title = (paid ? 'Paid' : no ? 'Not approved' : 'In line') + ' · RETAIL';
+    const lines = paid ? `
+        <div class="ln"><span>RECEIPT</span><span>#${fmt.pad(t.n)}</span></div>
+        <div class="ln"><span>PAID IN SOL</span><span>${fmt.sol(t.sol)}</span></div>
+        <div class="ln"><span>VALUE THEN</span><span>${t.usd ? fmt.usd(t.usd) : '—'}</span></div>
+        <div class="ln"><span>PAID AT</span><span>${fmt.date(t.pt)}</span></div>
+        <div class="ln"><span>TX</span><span><a class="link" href="${solscan.tx(t.sig)}" target="_blank" rel="noopener">${esc(t.sig.slice(0, 8))}… ↗</a></span></div>`
+      : no ? `<div class="c" style="margin:6px 0">${esc(t.why || 'This claim didn\'t pass review.')}</div>`
+      : `<div class="big">#${t.pos || '—'} in line</div><div class="c mute">${t.line} ticket${t.line === 1 ? '' : 's'} waiting · checks for your payout every 20 s</div>`;
+    $('#ticket').innerHTML = `<div class="rcsh" style="filter:drop-shadow(8px 10px 0 rgba(20,20,20,.25))"><div class="rc">
+      <h4>RETAIL</h4><div class="sub">TICKET #${esc(t.id)}</div><hr>
+      <div class="ln"><span>CUSTOMER</span><span>@${esc(t.h)}</span></div>
+      <div class="ln"><span>WALLET</span><span>${esc(t.w)}</span></div>
+      <div class="ln"><span>CLAIMED</span><span>${fmt.date(t.ts)}</span></div>
+      <div class="prog"><span class="on">CLAIMED</span><span class="${paid || no ? 'on' : 'on'}">${no ? 'REVIEWED' : 'IN LINE'}</span><span class="${paid ? 'on' : ''}">${no ? 'CLOSED' : 'PAID'}</span></div><hr>
+      <div class="ln"><span>1x YOUR FIRST TRADE</span><span>$${j.amountUsd}.00</span></div>
+      <div class="ln"><span>&nbsp;&nbsp; FIRST-TIMER</span><span>-$${j.amountUsd}.00</span></div>
+      <div class="ln tot"><span>TOTAL</span><b>$0.00</b></div><hr>
+      ${lines}
+      <div class="bars"></div><div class="ty">${paid ? 'THANK YOU · COME AGAIN' : no ? 'ONE PER PERSON' : 'PLEASE WAIT TO BE CALLED'}</div>
+    </div></div>${paid ? '<div class="stamp">PAID</div>' : no ? '<div class="stamp no">NOT APPROVED</div>' : ''}`;
+    $('#after').innerHTML = paid
+      ? `<a class="btn" href="/learn#trade">Make my first trade <span class="arr">→</span></a><a class="btn w" href="/receipts">See the receipt wall</a>`
+      : no ? `<a class="btn w" href="/#faq">Read the FAQ</a>`
+      : `<a class="btn w" href="/learn#wallet">While you wait: wallet guide</a><a class="btn w" href="/learn#check">How to check a coin</a>`;
+    clearTimeout(timer);
+    if (!paid && !no) timer = setTimeout(load, 20000);
+  }
+  async function load() {
+    if (!id) { $('#title').textContent = 'Find your ticket'; $('#ticket').innerHTML = ''; return; }
+    const j = await api('status?id=' + encodeURIComponent(id));
+    if (j.ok) return render(j);
+    $('#kick').textContent = 'Ticket #' + id;
+    $('#title').textContent = j.reason === 'not_found' ? 'No ticket with that number.' : 'Couldn\'t load your ticket.';
+    $('#ticket').innerHTML = `<div class="msg ${j.reason === 'not_found' ? 'bad' : 'info'}">${esc(j.msg || '')}</div>`;
+    if (j.reason !== 'not_found') timer = setTimeout(load, 20000);
+  }
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && timer) { clearTimeout(timer); load(); } });
+  load();
+})();
+</script>
+</body>
+</html>

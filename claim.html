@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Get my $20 · RETAIL</title>
+<meta name="description" content="Put a code in your X bio, paste your wallet address, get $20 in SOL for your first trade.">
+<meta name="theme-color" content="#ff8a1e">
+<meta property="og:image" content="/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="/assets/img/favicon-180.png">
+<link rel="stylesheet" href="/assets/css/retail.css">
+</head>
+<body>
+<header id="top"></header>
+<main class="page">
+  <div class="wrap">
+    <span class="kick">Get my $20</span>
+    <h1 class="pop">Step up to the till.</h1>
+    <div class="app">
+      <div class="card" id="flow">
+        <div class="steps" aria-hidden="true"><i></i><i></i><i></i></div>
+
+        <div class="step" id="s0"><div class="lab">Opening the store</div><p class="mute"><span class="spin"></span>&nbsp; One moment…</p></div>
+
+        <div class="step hide" id="closed"><div class="lab">Store</div><h2 id="closed-h">The store opens at launch.</h2><p class="lead" id="closed-p">Claims open here when $RETAIL launches. Follow along on X and come back.</p><div class="row" style="margin-top:14px"><a class="btn w" href="/learn#wallet">Set up a wallet meanwhile</a></div></div>
+
+        <div class="step hide" id="s1">
+          <div class="lab">Step 1 of 3</div>
+          <h2>What's your X username?</h2>
+          <p class="mute">We'll give you a short code to put in your bio. That's how we know it's really you.</p>
+          <form id="f1" autocomplete="off">
+            <label class="sr" for="handle">X username</label>
+            <div class="field"><span class="pre">@</span><input id="handle" name="handle" inputmode="text" autocapitalize="off" spellcheck="false" maxlength="40" placeholder="yourname" required></div>
+            <div class="hint" id="h1"></div>
+            <button class="btn" id="b1" type="submit">Get my code <span class="arr">→</span></button>
+          </form>
+          <div class="msg info hide" id="have"></div>
+        </div>
+
+        <div class="step hide" id="s2">
+          <div class="lab">Step 2 of 3</div>
+          <h2>Put this code in your X bio.</h2>
+          <div class="codebox"><b id="code">RETAIL-·····</b><button class="btn sm" id="copy" type="button">Copy code</button></div>
+          <ol class="howto">
+            <li><span>Open X and go to your profile. Tap <b>Edit profile</b>.</span></li>
+            <li><span>Paste the code anywhere in your <b>Bio</b> and tap <b>Save</b>.</span></li>
+            <li><span>Come back here and tap the button below. You can delete the code once you're verified.</span></li>
+          </ol>
+          <div class="row"><button class="btn" id="b2" type="button">I added it, check my bio <span class="arr">→</span></button><a class="btn w sm" href="https://x.com/settings/profile" target="_blank" rel="noopener">Open X profile settings ↗</a></div>
+          <div class="msg bad hide" id="e2" role="alert"></div>
+          <p class="mute" style="font-size:14px;margin-top:14px">Checking <b id="for"></b>. <a class="link" href="#" id="restart">Not you? Start over</a></p>
+        </div>
+
+        <div class="step hide" id="s3">
+          <div class="lab">Step 3 of 3</div>
+          <h2>Where should we send your SOL?</h2>
+          <div class="who"><div class="av" id="av">R</div><div><b id="who-h">@you</b> is verified ✓<small id="who-m"></small></div></div>
+          <form id="f3" autocomplete="off">
+            <label class="sr" for="wallet">Your Solana wallet address</label>
+            <div class="field"><input class="mono" id="wallet" name="wallet" autocapitalize="off" spellcheck="false" maxlength="60" placeholder="Paste your Solana address" required><button type="button" id="paste">Paste</button></div>
+            <div class="hint" id="h3">It's 32–44 letters and numbers. Find it in your wallet under Receive → Solana.</div>
+            <label class="agree"><input type="checkbox" id="agree"><span>I'm 18 or older. I understand memecoins are risky and this isn't financial advice. I've read the <a class="link" href="/#policies" target="_blank">store policies</a>.</span></label>
+            <button class="btn" id="b3" type="submit">Send me $20 in SOL <span class="arr">→</span></button>
+          </form>
+          <div class="msg bad hide" id="e3" role="alert"></div>
+        </div>
+      </div>
+
+      <aside class="side">
+        <div class="warn"><span><b>Only paste your address.</b> Never share your secret words. We never DM you.</span></div>
+        <div class="card"><h3>No wallet yet?</h3><p>Get a free one in 2 minutes.</p>
+          <div class="row" style="margin-top:12px"><a class="btn w sm" href="https://phantom.com/download" target="_blank" rel="noopener">Phantom ↗</a><a class="btn w sm" href="https://solflare.com/download" target="_blank" rel="noopener">Solflare ↗</a></div>
+          <p style="margin-top:12px"><a class="link" href="/learn#wallet">Read the 2-minute guide</a></p></div>
+        <div class="card"><h3>What we check</h3><p>Only your public X profile. No login, no access to your account.</p>
+          <p id="rules" class="mute" style="font-size:14px"></p></div>
+      </aside>
+    </div>
+  </div>
+</main>
+<script src="/assets/js/common.js"></script>
+<script>
+(() => {
+  const { $, $$, api, store, toast, copy, esc, fmt } = R;
+  const SS = 'retail.claim', LS = 'retail.tickets';
+  const ss = { get() { try { return JSON.parse(sessionStorage.getItem(SS)) || {}; } catch { return {}; } }, set(v) { try { sessionStorage.setItem(SS, JSON.stringify(v)); } catch {} } };
+  const tickets = () => { try { return JSON.parse(localStorage.getItem(LS)) || []; } catch { return []; } };
+  let st = ss.get();
+
+  function show(id, n) {
+    $$('.step').forEach(s => s.classList.toggle('hide', s.id !== id));
+    $$('.steps i').forEach((i, k) => { i.className = n == null ? '' : k < n ? 'done' : k === n ? 'on' : ''; });
+  }
+  function busy(btn, on, label) {
+    if (on) { btn._t = btn.innerHTML; btn.innerHTML = `<span class="spin"></span> ${label}`; btn.disabled = true; }
+    else { btn.innerHTML = btn._t || btn.innerHTML; btn.disabled = false; }
+  }
+  const err = (el, j) => { el.textContent = j.msg || 'Something went wrong. Try again.'; el.classList.remove('hide'); };
+
+  // base58 check in the browser (same rule as the server)
+  const B58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+  function b58len(s) { let b = [0]; for (const ch of s) { const v = B58.indexOf(ch); if (v < 0) return -1; let c = v; for (let i = 0; i < b.length; i++) { c += b[i] * 58; b[i] = c & 255; c >>= 8; } while (c) { b.push(c & 255); c >>= 8; } } for (const ch of s) { if (ch === '1') b.push(0); else break; } return b.length; }
+  const validW = s => s.length >= 32 && s.length <= 44 && b58len(s) === 32;
+
+  function toStep2() {
+    $('#code').textContent = st.code; $('#for').textContent = '@' + st.handle; $('#e2').classList.add('hide');
+    show('s2', 1);
+  }
+  function toStep3() {
+    const p = st.profile || {};
+    $('#who-h').textContent = '@' + (p.handle || st.handle);
+    $('#av').textContent = (p.name || p.handle || 'R').trim().charAt(0).toUpperCase() || 'R';
+    $('#who-m').textContent = `${fmt.int(p.followers)} followers · ${fmt.int(p.posts)} posts${p.ageDays != null ? ' · ' + fmt.int(p.ageDays) + ' days on X' : ''}`;
+    show('s3', 2);
+  }
+
+  $('#f1').addEventListener('submit', async e => {
+    e.preventDefault();
+    const h = $('#handle').value.trim().replace(/^@/, '').replace(/^https?:\/\/(www\.)?(x|twitter)\.com\//i, '').replace(/[/?#].*$/, '');
+    if (!/^[A-Za-z0-9_]{1,15}$/.test(h)) { const el = $('#h1'); el.className = 'hint bad'; el.textContent = 'Letters, numbers and _ only, up to 15 characters.'; return; }
+    const b = $('#b1'); busy(b, true, 'Getting your code…');
+    const j = await api('code', { handle: h });
+    busy(b, false);
+    if (!j.ok) { const el = $('#h1'); el.className = 'hint bad'; el.textContent = j.msg; return; }
+    st = { handle: j.handle, code: j.code, at: Date.now() }; ss.set(st); toStep2();
+  });
+  $('#handle').addEventListener('input', () => { $('#h1').textContent = ''; });
+  $('#copy').onclick = () => copy(st.code, 'Code copied. Paste it in your X bio.');
+  $('#restart').onclick = e => { e.preventDefault(); st = {}; ss.set(st); $('#handle').value = ''; show('s1', 0); };
+  $('#b2').onclick = async () => {
+    const b = $('#b2'); $('#e2').classList.add('hide'); busy(b, true, 'Reading your bio…');
+    const j = await api('verify', { handle: st.handle });
+    busy(b, false);
+    if (!j.ok) return err($('#e2'), j);
+    st.vt = j.vt; st.profile = j.profile; st.vat = Date.now(); ss.set(st); toStep3();
+  };
+
+  const wIn = $('#wallet'), h3 = $('#h3');
+  function checkW() {
+    const v = wIn.value.trim();
+    if (!v) { h3.className = 'hint'; h3.textContent = 'It\'s 32–44 letters and numbers. Find it in your wallet under Receive → Solana.'; return false; }
+    if (/\s/.test(v) && v.split(/\s+/).length >= 12) { h3.className = 'hint bad'; h3.textContent = 'Stop: that looks like secret words. Never paste those anywhere. Paste your address instead.'; return false; }
+    if (!validW(v)) { h3.className = 'hint bad'; h3.textContent = 'That isn\'t a Solana address. Copy it again from your wallet.'; return false; }
+    h3.className = 'hint ok'; h3.textContent = 'Looks like a Solana address ✓'; return true;
+  }
+  wIn.addEventListener('input', checkW);
+  $('#paste').onclick = async () => { try { wIn.value = (await navigator.clipboard.readText()).trim(); checkW(); } catch { toast('Press and hold the box, then tap Paste.'); wIn.focus(); } };
+  $('#f3').addEventListener('submit', async e => {
+    e.preventDefault(); $('#e3').classList.add('hide');
+    if (!checkW()) { wIn.focus(); return; }
+    if (!$('#agree').checked) return err($('#e3'), { msg: 'Tick the box to confirm you\'re 18+ and understand the risks.' });
+    const b = $('#b3'); busy(b, true, 'Ringing it up…');
+    const j = await api('claim', { vt: st.vt, wallet: wIn.value.trim(), agree: true });
+    if (!j.ok) { busy(b, false); if (j.reason === 'expired') { st.vt = null; ss.set(st); toStep2(); return err($('#e2'), j); } return err($('#e3'), j); }
+    try { const t = tickets(); t.unshift({ id: j.id, h: st.handle, at: Date.now() }); localStorage.setItem(LS, JSON.stringify(t.slice(0, 5))); } catch {}
+    ss.set({}); location.href = '/status?id=' + encodeURIComponent(j.id) + '&new=1';
+  });
+
+  (async () => {
+    const s = await store(), c = s.cfg || {};
+    $('#rules').textContent = `Rules: account at least ${c.minAgeDays ?? 30} days old, ${c.minFollowers ?? 10}+ followers, ${c.minPosts ?? 5}+ posts, a new wallet, 18+. One per person.`;
+    if (!s.ok || !c.storage) return show('closed');
+    if (!c.open) { $('#closed-h').textContent = 'Claims are paused.'; $('#closed-p').textContent = 'The till is closed for a moment. Check back soon, or follow along on X.'; return show('closed'); }
+    if (s.stats && s.stats.left <= 0) { $('#closed-h').textContent = 'Today\'s spots are gone.'; $('#closed-p').textContent = 'New spots open every day at 00:00 UTC. Get your wallet ready and come back.'; return show('closed'); }
+    const t = tickets();
+    if (t.length) { const el = $('#have'); el.innerHTML = `You already have ticket <b>#${esc(t[0].id)}</b>. <a class="link" href="/status?id=${encodeURIComponent(t[0].id)}">Check its status</a>`; el.classList.remove('hide'); }
+    if (st.vt && Date.now() - (st.vat || 0) < 25 * 60000) return toStep3();
+    if (st.code && Date.now() - (st.at || 0) < 20 * 3600000) return toStep2();
+    show('s1', 0);
+  })();
+})();
+</script>
+</body>
+</html>

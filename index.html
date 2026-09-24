@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>RETAIL</title>
+<meta name="description" content="Your first crypto trade is on the house. Put a code in your X bio, paste your wallet address, get $20 in SOL. Every payout prints a receipt on-chain.">
+<meta name="theme-color" content="#ff8a1e">
+<meta property="og:title" content="RETAIL: your first trade is on the house">
+<meta property="og:description" content="Put a code in your X bio, paste your wallet, get $20 in SOL. Every payout prints a receipt on-chain.">
+<meta property="og:image" content="/assets/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/img/favicon-180.png">
+<link rel="preload" href="/assets/fonts/lucky.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/css/retail.css">
+</head>
+<body>
+<header id="top"></header>
+
+<main>
+<section class="hero">
+  <div class="floor"></div>
+  <div class="wrap">
+    <div>
+      <span class="kick">New to crypto?</span>
+      <h1 class="pop"><span class="sm">Your first trade is</span>on the house.</h1>
+      <p class="lead">Put a code in your X bio, paste your wallet, get <b>$20 in SOL</b>. No deposit. No card.</p>
+      <div class="ctas">
+        <a class="btn" href="/claim">Get my $20 <span class="arr">→</span></a>
+        <a class="btn w" href="/learn#wallet">I need a wallet</a>
+      </div>
+      <div class="live" id="live"><span class="dot off"></span><span>Checking the store…</span></div>
+    </div>
+    <div class="art" aria-hidden="true">
+      <div class="register">
+        <div class="top"><div class="lcd"><span>TOTAL DUE</span><b id="lcd">$0.00</b></div><div class="slot"></div></div>
+        <div class="paper"><div class="rc">
+          <h4>RETAIL</h4><div class="sub">CRYPTO STORE · FIRST VISIT</div><hr>
+          <div class="ln"><span>1x YOUR FIRST TRADE</span><span>$20.00</span></div>
+          <div class="ln"><span>&nbsp;&nbsp; FIRST-TIMER</span><span>-$20.00</span></div><hr>
+          <div class="ln tot"><span>TOTAL</span><b>$0.00</b></div>
+          <div class="ln"><span>PAID BY</span><span>$RETAIL FEES</span></div>
+          <div class="bars"></div>
+          <div class="ty">RECEIPT ON-CHAIN · COME AGAIN</div>
+        </div></div>
+        <div class="stamp">PAID</div>
+      </div>
+      <img class="cartroll" src="/assets/img/mark-speed.svg" alt="">
+      <div class="sticker y" style="left:0;top:26%;animation-delay:1.3s">no deposit!</div>
+      <div class="sticker nc" style="left:6%;top:44%;transform:rotate(8deg);animation-delay:1.5s">no card!</div>
+      <div class="sticker k" style="right:-2%;bottom:18%;transform:rotate(-6deg);animation-delay:1.7s">$0.00</div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="how">
+  <div class="wrap">
+    <div class="hd c"><span class="kick">How it works</span><h2>Three aisles. Three minutes.</h2></div>
+    <div class="aisles">
+      <div class="aisle reveal"><div class="num"><b>AISLE 1</b><i>~2 min</i></div><h3>Get a free wallet</h3><p>Phantom or Solflare.</p></div>
+      <div class="aisle reveal"><div class="num"><b>AISLE 2</b><i>~30 sec</i></div><h3>Code in your X bio</h3><p>Proves it's you. No login.</p></div>
+      <div class="aisle reveal"><div class="num"><b>AISLE 3</b><i>~30 sec</i></div><h3>Paste your address</h3><p>$20 in SOL, on its way.</p></div>
+    </div>
+    <div class="checkout reveal">
+      <h3>Checkout: your first trade.</h3>
+      <div class="row"><a class="btn" href="/claim">Get my $20 <span class="arr">→</span></a><a class="btn w" href="/learn#trade">How to trade</a></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec wall" id="receipts">
+  <div class="wrap">
+    <div class="hd">
+      <span class="kick">The receipt wall</span>
+      <h2 class="pop">Every payout prints a receipt.</h2>
+      <p class="lead">Real Solana transactions. Tap one to check it.</p>
+      <div class="tot3" id="tot3">
+        <div class="chip">Receipts<b id="t-n">—</b></div>
+        <div class="chip">SOL paid<b id="t-sol">—</b></div>
+        <div class="chip">Spots left today<b id="t-left">—</b></div>
+      </div>
+    </div>
+    <div class="rgrid" id="wall"></div>
+    <div class="walllink"><a class="btn w" href="/receipts">See the whole wall <span class="arr">→</span></a></div>
+  </div>
+</section>
+
+<section class="sec" id="money">
+  <div class="wrap">
+    <div class="hd c"><span class="kick">Where the $20 comes from</span><h2>Follow the belt.</h2></div>
+    <div class="belt">
+      <div class="st reveal"><div class="ic">1</div><b>$RETAIL trades</b>on pump.fun</div>
+      <div class="st reveal"><div class="ic">2</div><b>Creator fees</b>from every trade</div>
+      <div class="st reveal"><div class="ic">3</div><b>Payout wallet</b><span class="mono" id="pw">public at launch</span></div>
+      <div class="st reveal"><div class="ic">4</div><b>$20 in SOL</b>to a first-timer</div>
+      <div class="st reveal"><div class="ic">5</div><b>Receipt</b>on-chain</div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="learn" style="padding-top:0">
+  <div class="wrap">
+    <div class="hd"><span class="kick">Beginner guides</span><h2>Grab one off the shelf.</h2></div>
+    <div class="shelf">
+      <a class="box reveal" href="/learn#wallet"><h3>Set up a wallet</h3><span class="pt">2 min</span></a>
+      <a class="box reveal" href="/learn#trade"><h3>First trade</h3><span class="pt">4 min</span></a>
+      <a class="box reveal" href="/learn#check"><h3>Check a coin</h3><span class="pt">3 min</span></a>
+      <a class="box reveal" href="/learn#safe"><h3>Stay safe</h3><span class="pt">2 min</span></a>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="policies" style="padding-top:0">
+  <div class="wrap">
+    <div class="sign reveal">
+      <h2>Store policies</h2>
+      <ul class="pol">
+        <li><span class="n">1</span><div><b>18+ only.</b></div></li>
+        <li><span class="n">2</span><div><b>One per person.</b><span>One X account, one wallet.</span></div></li>
+        <li><span class="n">3</span><div><b>We never DM you.</b><span>Anyone who does is a scammer.</span></div></li>
+        <li><span class="n">4</span><div><b>Only paste your address.</b><span>Never share your secret words.</span></div></li>
+        <li><span class="n">5</span><div><b>Memecoins are risky.</b><span>Not financial advice.</span></div></li>
+        <li><span class="n">6</span><div><b>One real coin.</b><span id="ca-line">$RETAIL on pump.fun. CA posted here at launch.</span></div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="faq" style="padding-top:0">
+  <div class="wrap">
+    <div class="hd c"><span class="kick">FAQ</span><h2>Ask the cashier.</h2></div>
+    <div class="faq">
+      <details><summary>Why a code in my X bio?</summary><div class="a"><p>It stops bots. We only read your public profile. Delete the code after.</p></div></details>
+      <details><summary>Who can claim?</summary><div class="a"><p>18+, a public X account at least <span data-cfg="minAgeDays">30</span> days old with <span data-cfg="minFollowers">10</span>+ followers and <span data-cfg="minPosts">5</span>+ posts, and a new wallet.</p></div></details>
+      <details><summary>How fast is the payout?</summary><div class="a"><p>Paid in order, usually within minutes. Some claims get a quick human check, up to 24 hours. Your ticket shows your place in line.</p></div></details>
+      <details><summary>How much SOL is $20?</summary><div class="a"><p>Right now about <b id="faq-sol">—</b> SOL.</p></div></details>
+      <details><summary>Do I have to buy $RETAIL?</summary><div class="a"><p>No. Its creator fees pay for this. You don't need to buy it to claim.</p></div></details>
+    </div>
+  </div>
+</section>
+
+<section class="sec next">
+  <div class="wrap">
+    <h2 class="pop">Next customer, please.</h2>
+    <p style="margin:26px 0 0"><a class="btn k" href="/claim">Get my $20 <span class="arr">→</span></a></p>
+    <p class="fine">18+ · One per person · Not financial advice · Not affiliated with X, Phantom, Solflare or pump.fun</p>
+  </div>
+</section>
+</main>
+
+<script src="/assets/js/common.js"></script>
+<script>
+(async () => {
+  const { $, $$, fmt, store, api, receiptCard, emptyReceipt, esc } = R;
+  const [s, rc] = await Promise.all([store(), api('receipts?limit=8')]);
+  const live = $('#live');
+  const cfg = s.cfg || {};
+  $$('[data-cfg]').forEach(el => { if (cfg[el.dataset.cfg] != null) el.textContent = cfg[el.dataset.cfg]; });
+  if (cfg.payout) $('#pw').innerHTML = `<a class="link" href="${R.solscan.acct(cfg.payout)}" target="_blank" rel="noopener">${esc(fmt.short(cfg.payout))} ↗</a>`;
+  if (cfg.ca) $('#ca-line').innerHTML = `CA: <span class="mono" style="word-break:break-all">${esc(cfg.ca)}</span>`;
+  if (s.price) $('#faq-sol').textContent = (cfg.amountUsd / s.price).toFixed(3);
+  const st = s.stats;
+  if (!s.ok || !cfg.storage || !st) live.innerHTML = '<span class="dot off"></span><span>The store opens at launch.</span>';
+  else if (!cfg.open) live.innerHTML = '<span class="dot off"></span><span>Claims are paused right now.</span>';
+  else live.innerHTML = `<span class="dot${st.left ? '' : ' off'}"></span><span><b>${fmt.int(st.paid)}</b> paid · <b>${fmt.int(st.left)}</b> spot${st.left === 1 ? '' : 's'} left today</span>`;
+  if (st) { $('#t-left').textContent = fmt.int(st.left); }
+  if (rc && rc.ok) {
+    $('#t-n').textContent = fmt.int(rc.total);
+    $('#t-sol').textContent = rc.total ? fmt.sol(rc.sol) : '0';
+    $('#wall').innerHTML = rc.receipts.length ? rc.receipts.map(receiptCard).join('') : emptyReceipt();
+  } else $('#wall').innerHTML = emptyReceipt();
+})();
+</script>
+</body>
+</html>

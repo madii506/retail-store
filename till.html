@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Till · RETAIL</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#141414">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="stylesheet" href="/assets/css/retail.css">
+</head>
+<body class="till">
+<header id="top"></header>
+<main class="page">
+  <div class="wrap">
+    <span class="kick">Staff only</span>
+    <h1 class="pop">The till.</h1>
+    <p class="lead">Pay claims from the payout wallet. Every payment is approved by you in your wallet, carries a memo with its receipt number, and is checked on-chain before it counts. This page never sees your keys.</p>
+
+    <div class="card" id="gate" style="margin-top:22px">
+      <h3 id="gate-h">Sign in with the payout wallet</h3>
+      <p class="mute" id="gate-p">Connect Phantom (or Solflare) with the payout wallet, then sign a free message. No transaction is sent.</p>
+      <div class="row" style="margin-top:14px"><button class="btn" id="connect">Connect wallet</button></div>
+      <div class="msg bad hide" id="gate-e" role="alert"></div>
+    </div>
+
+    <div id="desk" class="hide">
+      <div class="grid">
+        <div class="chip">Wallet balance<b id="k-bal">—</b></div>
+        <div class="chip">SOL price<b id="k-price">—</b></div>
+        <div class="chip">$<span id="k-amt">20</span> is<b id="k-lam">—</b></div>
+        <div class="chip">Paid / today<b id="k-paid">—</b></div>
+      </div>
+      <div class="row"><button class="btn w sm" id="refresh">Refresh</button><button class="btn w sm" id="sync">Re-check chain for payouts</button><span class="mute" id="who" style="font-size:14px"></span><button class="btn w sm" id="out" style="margin-left:auto">Sign out</button></div>
+      <div class="tabs" role="tablist"><button role="tab" data-t="queue" aria-selected="true">In line <span id="n-q"></span></button><button role="tab" data-t="paid" aria-selected="false">Paid</button><button role="tab" data-t="rejected" aria-selected="false">Not approved</button></div>
+      <div id="list"></div>
+    </div>
+  </div>
+</main>
+<script src="/assets/js/common.js"></script>
+<script src="/assets/vendor/web3.min.js"></script>
+<script>
+(() => {
+  const { $, $$, api, store, fmt, esc, toast, solscan } = R;
+  const MEMO = 'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr';
+  const KEY = 'retail.till';
+  let tok = null, payout = '', data = null, tab = 'queue', provider = null;
+  try { tok = sessionStorage.getItem(KEY); } catch {}
+
+  const getProvider = () => (window.phantom && window.phantom.solana) || (window.solana && window.solana.isPhantom && window.solana) || window.solflare || window.solana || null;
+  const gateErr = m => { const e = $('#gate-e'); e.textContent = m; e.classList.remove('hide'); };
+  const b64 = u8 => btoa(String.fromCharCode(...u8));
+
+  async function connect() {
+    $('#gate-e').classList.add('hide');
+    provider = getProvider();
+    if (!provider) return gateErr('No Solana wallet found in this browser. Install Phantom or Solflare, or open this page inside the wallet app\'s browser.');
+    const btn = $('#connect'); btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Waiting for wallet…';
+    try {
+      const r = await provider.connect();
+      const pk = ((r && r.publicKey) || provider.publicKey).toString();
+      if (pk !== payout) throw new Error(`That's ${fmt.short(pk)}. Switch your wallet to the payout wallet ${fmt.short(payout)} and try again.`);
+      const c = await api('till', { op: 'challenge' });
+      if (!c.ok) throw new Error(c.msg);
+      const s = await provider.signMessage(new TextEncoder().encode(c.msg), 'utf8');
+      const sig = s && s.signature ? s.signature : s;
+      const l = await api('till', { op: 'login', pub: pk, sig: b64(new Uint8Array(sig)), nt: c.nt });
+      if (!l.ok) throw new Error(l.msg);
+      tok = l.tok; try { sessionStorage.setItem(KEY, tok); } catch {}
+      await openDesk();
+    } catch (e) { gateErr(e && e.message ? e.message : 'The wallet didn\'t connect.'); }
+    btn.disabled = false; btn.textContent = 'Connect wallet';
+  }
+
+  async function openDesk() {
+    const j = await api('till', { op: 'queue', tok });
+    if (!j.ok) { if (j.reason === 'signin') { tok = null; try { sessionStorage.removeItem(KEY); } catch {} $('#gate').classList.remove('hide'); $('#desk').classList.add('hide'); return; } return toast(j.msg); }
+    data = j; $('#gate').classList.add('hide'); $('#desk').classList.remove('hide');
+    $('#k-bal').textContent = j.balance == null ? '—' : fmt.sol(j.balance) + ' SOL';
+    $('#k-price').textContent = j.price ? fmt.usd(j.price) : '—';
+    $('#k-amt').textContent = j.amountUsd;
+    $('#k-lam').textContent = j.lamports ? fmt.sol(j.lamports / 1e9) + ' SOL' : '—';
+    $('#k-paid').textContent = `${fmt.int(j.stats.paid)} / ${fmt.int(j.stats.today)}`;
+    $('#n-q').textContent = j.queue.length ? `(${j.queue.length})` : '';
+    $('#who').textContent = 'Signed in as ' + fmt.short(payout);
+    if (j.balance != null && j.lamports && j.balance * 1e9 < j.lamports * 1.02) toast('The payout wallet is too low to pay the next claim.', 5000);
+    render();
+  }
+
+  function item(c) {
+    const age = c.age != null ? `${fmt.int(c.age)} days on X` : 'account age unknown';
+    const head = `<div><div class="who2"><a class="link" href="https://x.com/${encodeURIComponent(c.h)}" target="_blank" rel="noopener">@${esc(c.h)}</a> ${c.name ? `<span class="mute" style="font-weight:700">${esc(c.name)}</span>` : ''}</div>
+      <div class="meta">#${esc(c.id)} · ${fmt.int(c.fo)} followers · ${fmt.int(c.po)} posts · ${age} · claimed ${fmt.ago(c.ts)}</div>
+      <div class="w"><a class="link" href="${solscan.acct(c.w)}" target="_blank" rel="noopener">${esc(c.w)}</a></div></div>`;
+    if (c.st === 'p') return `<div class="qi">${head}<div class="acts"><a class="btn g sm" href="${solscan.tx(c.sig)}" target="_blank" rel="noopener">Receipt #${fmt.pad(c.n)} · ${fmt.sol(c.lam / 1e9)} SOL ↗</a></div></div>`;
+    if (c.st === 'x') return `<div class="qi">${head}<div class="acts"><span class="mute" style="font-size:14px">${esc(c.why || '')}</span><button class="btn w sm" data-restore="${esc(c.id)}">Put back in line</button></div></div>`;
+    return `<div class="qi" id="q-${esc(c.id)}">${head}<div class="acts">
+      <button class="btn sm" data-pay="${esc(c.id)}">Pay $${data.amountUsd}</button>
+      <select class="btn w sm" data-why="${esc(c.id)}" aria-label="Reject reason" style="appearance:auto">
+        <option value="">Reject…</option><option>Looks like a bot account.</option><option>Same person claimed twice.</option><option>Wallet isn't new.</option><option>Didn't pass review.</option>
+      </select></div></div>`;
+  }
+  function render() {
+    $$('.tabs button').forEach(b => b.setAttribute('aria-selected', b.dataset.t === tab));
+    const rows = data[tab] || [];
+    $('#list').innerHTML = rows.length ? rows.map(item).join('') : `<div class="msg info">${tab === 'queue' ? 'Nobody in line. Nice.' : 'Nothing here yet.'}</div>`;
+  }
+
+  async function pay(id, btn) {
+    const c = data.queue.find(x => x.id === id); if (!c) return;
+    provider = provider || getProvider();
+    if (!provider) return toast('Wallet not found. Reconnect.');
+    btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Preparing…';
+    try {
+      if (!provider.isConnected && provider.connect) await provider.connect();
+      const h = await api('till', { op: 'blockhash', tok, id });
+      if (!h.ok) throw new Error(h.msg);
+      const W = window.solanaWeb3;
+      const from = new W.PublicKey(payout), to = new W.PublicKey(c.w);
+      const tx = new W.Transaction({ feePayer: from, blockhash: h.blockhash, lastValidBlockHeight: h.lastValidBlockHeight });
+      tx.add(W.SystemProgram.transfer({ fromPubkey: from, toPubkey: to, lamports: h.lamports }));
+      tx.add(new W.TransactionInstruction({ programId: new W.PublicKey(MEMO), keys: [], data: new TextEncoder().encode(h.memo) }));
+      btn.innerHTML = '<span class="spin"></span> Approve in wallet…';
+      const r = await provider.signAndSendTransaction(tx);
+      const sig = typeof r === 'string' ? r : r.signature;
+      btn.innerHTML = '<span class="spin"></span> Confirming…';
+      for (let i = 0; i < 30; i++) {
+        const m = await api('till', { op: 'mark', tok, id, sig });
+        if (m.ok) { toast(`Paid. Receipt #${fmt.pad(m.n)} printed.`); return openDesk(); }
+        if (m.reason !== 'not_yet' && m.reason !== 'rpc_down') throw new Error(m.msg + ' Tx: ' + sig);
+        await new Promise(r2 => setTimeout(r2, 3000));
+      }
+      throw new Error('Sent, but not confirmed yet. Hit "Re-check chain" in a minute. Tx: ' + sig);
+    } catch (e) {
+      toast(e && e.message ? e.message : 'Payment cancelled.', 6000);
+      btn.disabled = false; btn.textContent = `Pay $${data.amountUsd}`;
+    }
+  }
+
+  document.addEventListener('click', e => {
+    const p = e.target.closest('[data-pay]'); if (p) return pay(p.dataset.pay, p);
+    const r = e.target.closest('[data-restore]'); if (r) return api('till', { op: 'restore', tok, id: r.dataset.restore }).then(j => { toast(j.ok ? 'Back in line.' : j.msg); openDesk(); });
+    const t = e.target.closest('.tabs button'); if (t) { tab = t.dataset.t; render(); }
+  });
+  document.addEventListener('change', e => {
+    const s = e.target.closest('[data-why]'); if (!s || !s.value) return;
+    api('till', { op: 'reject', tok, id: s.dataset.why, why: s.value }).then(j => { toast(j.ok ? 'Marked not approved.' : j.msg); openDesk(); });
+  });
+  $('#connect').onclick = connect;
+  $('#refresh').onclick = openDesk;
+  $('#out').onclick = () => { tok = null; try { sessionStorage.removeItem(KEY); } catch {} try { provider && provider.disconnect && provider.disconnect(); } catch {} location.reload(); };
+  $('#sync').onclick = async () => { const b = $('#sync'); b.disabled = true; b.innerHTML = '<span class="spin"></span> Checking…'; const j = await api('till', { op: 'sync', tok }); b.disabled = false; b.textContent = 'Re-check chain for payouts'; toast(j.ok ? `Checked ${j.checked} transactions, found ${j.marked} payout${j.marked === 1 ? '' : 's'}.` : j.msg); openDesk(); };
+
+  (async () => {
+    const s = await store(); payout = (s.cfg && s.cfg.payout) || '';
+    if (!payout) { $('#gate-h').textContent = 'No payout wallet set yet.'; $('#gate-p').textContent = 'Add the payout wallet address to api/_config.js and redeploy. Only that wallet can open the till.'; $('#connect').classList.add('hide'); return; }
+    if (tok) openDesk();
+  })();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Receipt wall · RETAIL</title>
+<meta name="description" content="Every RETAIL payout, each one a confirmed Solana transaction from the public payout wallet.">
+<meta name="theme-color" content="#c68d57">
+<meta property="og:image" content="/assets/img/og.png">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="/assets/img/favicon-180.png">
+<link rel="stylesheet" href="/assets/css/retail.css">
+</head>
+<body class="wallpage">
+<header id="top"></header>
+<main class="sec wall" style="border-top:0;min-height:calc(100vh - 110px);padding-top:30px">
+  <div class="wrap">
+    <div class="hd">
+      <span class="kick">The receipt wall</span>
+      <h1 class="pop" style="font-size:clamp(44px,7vw,84px)">Every payout. Every receipt.</h1>
+      <p class="lead">Each receipt is a confirmed Solana transaction from the public payout wallet to someone who claimed here. Handles are masked. Tap a receipt to check it on Solscan.</p>
+      <div class="tot3">
+        <div class="chip">Receipts printed<b id="t-n">—</b></div>
+        <div class="chip">SOL paid out<b id="t-sol">—</b></div>
+        <div class="chip">Value when paid<b id="t-usd">—</b></div>
+        <div class="chip">Payout wallet<b id="t-w" style="font-size:18px;font-family:Plex,monospace">—</b></div>
+      </div>
+    </div>
+    <div class="rgrid" id="wall"></div>
+    <div class="walllink"><button class="btn w hide" id="more">Show more</button></div>
+  </div>
+</main>
+<script src="/assets/js/common.js"></script>
+<script>
+(async () => {
+  const { $, api, fmt, receiptCard, emptyReceipt, solscan, esc } = R;
+  let limit = 60;
+  async function load() {
+    const j = await api('receipts?limit=' + limit);
+    if (!j.ok) { $('#wall').innerHTML = emptyReceipt(); return; }
+    $('#t-n').textContent = fmt.int(j.total);
+    $('#t-sol').textContent = j.total ? fmt.sol(j.sol) : '0';
+    $('#t-usd').textContent = j.total ? fmt.usd(j.usd) : '$0';
+    $('#t-w').innerHTML = j.payout ? `<a class="link" href="${solscan.acct(j.payout)}" target="_blank" rel="noopener">${esc(fmt.short(j.payout))} ↗</a>` : 'at launch';
+    $('#wall').innerHTML = j.receipts.length ? j.receipts.map(receiptCard).join('') : emptyReceipt();
+    $('#more').classList.toggle('hide', j.receipts.length >= j.total);
+  }
+  $('#more').onclick = () => { limit = Math.min(500, limit + 60); load(); };
+  load();
+})();
+</script>
+</body>
+</html>
