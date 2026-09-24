@@ -87,5 +87,26 @@
   }
 
   window.R = { $, $$, esc, api, store, fmt, solscan, toast, copy, receiptCard, emptyReceipt };
-  document.addEventListener('DOMContentLoaded', () => { header(); reveal(); });
+  // living background: slow floating store bits behind every page
+  function bgfx() {
+    if (document.querySelector('.bgfx')) return;
+    const tag = t => `<svg viewBox="0 0 120 64"><path d="M22 4H112a6 6 0 0 1 6 6V54a6 6 0 0 1-6 6H22L3 32Z" fill="#ffe14d" stroke="#141414" stroke-width="4" stroke-linejoin="round"/><circle cx="18" cy="32" r="5" fill="#fff3e0" stroke="#141414" stroke-width="3"/><text x="68" y="43" text-anchor="middle" font-family="Lucky,Nunito" font-size="30" fill="#141414">${t}</text></svg>`;
+    const coin = t => `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="28" fill="#ffab4a" stroke="#141414" stroke-width="4"/><circle cx="32" cy="32" r="19" fill="none" stroke="#141414" stroke-width="3" stroke-dasharray="4 5"/><text x="32" y="42" text-anchor="middle" font-family="Lucky,Nunito" font-size="26" fill="#141414">${t}</text></svg>`;
+    const rec = `<svg viewBox="0 0 60 80"><path d="M4 4H56V70l-6-5-6 5-6-5-6 5-6-5-6 5-6-5-6 5Z" fill="#fffdf7" stroke="#141414" stroke-width="3.5" stroke-linejoin="round"/><path d="M13 18H47M13 28H40M13 38H47" stroke="#141414" stroke-width="3" stroke-linecap="round"/><path d="M13 50H47" stroke="#ff8a1e" stroke-width="5" stroke-linecap="round"/></svg>`;
+    const star = c => `<svg viewBox="0 0 40 40"><path d="M20 2C22 14 26 18 38 20C26 22 22 26 20 38C18 26 14 22 2 20C14 18 18 14 20 2Z" fill="${c}" stroke="#141414" stroke-width="2.5" stroke-linejoin="round"/></svg>`;
+    const sticker = t => `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="#141414"/><circle cx="50" cy="50" r="38" fill="none" stroke="#ffab4a" stroke-width="2.5" stroke-dasharray="5 4"/><text x="50" y="60" text-anchor="middle" font-family="Lucky,Nunito" font-size="28" fill="#ffab4a">${t}</text></svg>`;
+    const items = [
+      [tag('$0'), 4, 12, 96, 22], [coin('$'), 88, 8, 58, 26], [rec, 12, 58, 52, 30], [star('#ff8a1e'), 30, 26, 30, 18],
+      [sticker('FREE'), 76, 44, 78, 34], [tag('FREE'), 60, 82, 104, 28], [coin('20'), 20, 88, 62, 24], [star('#ffe14d'), 92, 70, 34, 20],
+      [rec, 46, 6, 44, 36], [star('#fffdf7'), 6, 38, 26, 16], [coin('$'), 52, 52, 44, 32], [tag('$0'), 84, 92, 86, 30],
+      [star('#ff8a1e'), 68, 20, 24, 22], [sticker('1ST'), 36, 72, 64, 38],
+    ];
+    const el = document.createElement('div');
+    el.className = 'bgfx'; el.setAttribute('aria-hidden', 'true');
+    el.innerHTML = '<i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i>' + items.map(([svg, x, y, w, d], i) =>
+      `<span style="left:${x}%;top:${y}%;width:${w}px;--d:${d}s;--r:${(i % 2 ? 1 : -1) * (8 + i * 3)}deg;animation-delay:-${i * 2.3}s">${svg}</span>`).join('');
+    document.body.prepend(el);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => { bgfx(); header(); reveal(); });
 })();
