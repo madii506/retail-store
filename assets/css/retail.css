@@ -468,3 +468,17 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;op
 @media (max-width:900px){.register{right:50%}}
 @media (max-width:480px){.sticker.nc{display:block;left:40%}}
 .register .stamp{top:auto;bottom:16%;right:10%}
+
+/* v4: living background on every page */
+body{background:var(--cream)}
+.bgfx{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.bgfx .blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:.75;animation:blob 26s ease-in-out infinite alternate}
+.bgfx .b1{width:46vmax;height:46vmax;left:-12vmax;top:-10vmax;background:radial-gradient(circle,#ffc27a,transparent 68%)}
+.bgfx .b2{width:40vmax;height:40vmax;right:-14vmax;top:30vh;background:radial-gradient(circle,#ffab4a,transparent 66%);animation-duration:32s;animation-delay:-8s}
+.bgfx .b3{width:36vmax;height:36vmax;left:25vw;bottom:-18vmax;background:radial-gradient(circle,#ffe1a8,transparent 66%);animation-duration:22s;animation-delay:-4s}
+@keyframes blob{0%{transform:translate(0,0) scale(1)}50%{transform:translate(6vw,4vh) scale(1.12)}100%{transform:translate(-4vw,8vh) scale(.95)}}
+.bgfx span{position:absolute;display:block;opacity:.5;filter:drop-shadow(3px 4px 0 rgba(20,20,20,.18));animation:drift var(--d,24s) ease-in-out infinite;will-change:transform}
+.bgfx span svg{width:100%;height:auto;display:block;overflow:visible}
+@keyframes drift{0%{transform:translate(0,0) rotate(var(--r))}25%{transform:translate(14px,-26px) rotate(calc(var(--r) + 8deg))}50%{transform:translate(-8px,-44px) rotate(calc(var(--r) - 4deg))}75%{transform:translate(-18px,-18px) rotate(calc(var(--r) + 5deg))}100%{transform:translate(0,0) rotate(var(--r))}}
+@media (max-width:700px){.bgfx span{opacity:.28}.bgfx span:nth-child(3n){display:none}}
+@media (prefers-reduced-motion:reduce){.bgfx .blob,.bgfx span{animation:none}}
