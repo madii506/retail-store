@@ -333,8 +333,8 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;op
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 .rc{background:linear-gradient(180deg,#fffef9,#fbf7ec 60%,#f6f0e0)}
 .register .paper{filter:drop-shadow(0 18px 18px rgba(60,30,0,.28))}
-.register{transform:perspective(1200px) rotateY(-8deg) rotateX(3deg)}
-@media (max-width:900px){.register{transform:translateX(50%)}}
+.register{transform:rotate(1.5deg)}
+@media (max-width:900px){.register{transform:translateX(50%) rotate(1deg)}}
 .register .top{background:linear-gradient(180deg,#2b2724,#141414 40%);box-shadow:var(--sh),inset 0 2px 0 rgba(255,255,255,.12)}
 .register .top::after{content:"RETAIL · TILL 01";position:absolute;right:18px;bottom:4px;font:600 9px/1 Plex,monospace;letter-spacing:.2em;color:#6b625a}
 
@@ -434,3 +434,37 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;op
 .tc a{font-weight:900}
 @media (max-width:1000px){.trust{grid-template-columns:1fr 1fr}}
 @media (max-width:560px){.trust{grid-template-columns:1fr}}
+
+/* v3: realistic dark profile screen (generic, fictional example) */
+.p-scr{background:#000;color:#e7e9ea}
+.p-scr .sb{position:absolute;left:0;right:0;top:0;z-index:2;color:#fff}
+.p-scr .ban{height:92px;background:radial-gradient(circle at 70% 30%,#ffd199,transparent 45%),linear-gradient(120deg,#ff8a1e,#b43f00)}
+.p-scr .av{width:64px;height:64px;border:4px solid #000;margin:-32px 0 0 12px;background:linear-gradient(135deg,#ffab4a,#e2372b);display:grid;place-items:center;font:900 26px/1 Nunito;color:#fff}
+.p-scr .ed{top:100px;border-color:#536471;color:#eff3f4;background:#000}
+.p-scr .nm{font-size:17px;color:#e7e9ea}
+.p-scr .hd2,.p-scr .meta{color:#71767b}
+.p-scr .bio{color:#e7e9ea;font-weight:600}
+.p-scr .bio mark{color:#141414}
+.p-scr .fo{color:#71767b}.p-scr .fo b{color:#e7e9ea}
+.p-scr .tabs3{border-bottom:1px solid #2f3336}
+.p-scr .tabs3 span{color:#71767b;font-size:11px}
+.p-scr .tabs3 span:first-child{color:#e7e9ea;box-shadow:inset 0 -3px 0 #ff8a1e}
+.p-scr .post{border-bottom:1px solid #2f3336;color:#e7e9ea;font-weight:600}
+.p-scr .post i{display:grid;place-items:center;font:900 13px/1 Nunito;color:#fff;font-style:normal;background:linear-gradient(135deg,#ffab4a,#e2372b)}
+.p-scr .post u{text-decoration:none;color:#71767b;font-weight:600}
+.p-scr .post p{margin:3px 0 5px;font-size:12px;line-height:1.35}
+.p-scr .post em{font-style:normal;color:#71767b;font-size:10.5px}
+.hero h1{margin-bottom:6px}
+.nav .bar{min-height:62px}
+.nav .links{margin:0 0 0 auto}
+@media (max-width:900px){.nav .menu{margin-left:auto}}
+.register .paper{margin-top:0;width:94%}
+.register{top:28px}
+.art{min-height:470px}
+.register{top:12px}
+@media (max-width:900px){.art{min-height:440px}}
+@media (max-width:480px){.art{min-height:420px}}
+.register{right:4%}
+@media (max-width:900px){.register{right:50%}}
+@media (max-width:480px){.sticker.nc{display:block;left:40%}}
+.register .stamp{top:auto;bottom:16%;right:10%}
