@@ -260,6 +260,15 @@ function memoOf(tx) {
   return '';
 }
 
+let balMem = null;
+async function payoutBalance() {
+  if (!CFG.payout) return null;
+  if (balMem && now() - balMem.at < 30000) return balMem.v;
+  const r = await rpc('getBalance', [CFG.payout, { commitment: 'confirmed' }]);
+  const v = r && typeof r.value === 'number' ? r.value / 1e9 : null;
+  balMem = { v, at: now() }; return v;
+}
+
 /* ---------------- SOL price ---------------- */
 let priceMem = null;
 async function solPrice() {
@@ -354,6 +363,6 @@ async function lookForPayout(claim) {
 module.exports = {
   CFG, send, body, query, clientIp, Fail, wrap, limit, now, DAY, dayKey,
   readDb, mutate, skip, secret, storageOn, signTok, readTok, codeFor, newId, hmac,
-  validWallet, verifyEd25519, normHandle, readX, rpc, getTx, transfersFrom, memoOf, solPrice,
+  validWallet, verifyEd25519, normHandle, readX, rpc, getTx, payoutBalance, transfersFrom, memoOf, solPrice,
   mask, short, queueOf, statsOf, receiptOf, publicCfg, checkTxForClaim, markPaid, lookForPayout, SYSTEM,
 };
