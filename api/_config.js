@@ -8,7 +8,7 @@ module.exports = {
   x: '',           // X handle of the project, without @
 
   amountUsd: 20,   // paid in SOL at the price when it's sent
-  dailyCap: 50,    // claims accepted per UTC day
+  dailyCap: 500,   // claims accepted per UTC day
   open: true,      // set false to pause new claims
 
   // who can claim (checked on the public X profile)
